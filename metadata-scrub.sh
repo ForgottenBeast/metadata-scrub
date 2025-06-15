@@ -14,7 +14,8 @@ if [[ ! -d "$FOLDER" ]]; then
 fi
 
 # Recursively find and scrub metadata from all image files
-find "$FOLDER" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.tiff" -o -iname "*.bmp" -o -iname "*.webp" \) -exec exiftool -overwrite_original -all= {} \;
+find "$FOLDER" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.tiff" -o -iname "*.bmp" -o -iname "*.webp" \) -print0 \
+| xargs -0 -n 1 -P "$(nproc)" exiftool -overwrite_original -all=
 
 echo "✅ Metadata removed from all images in '$FOLDER'."
 
