@@ -53,12 +53,7 @@ if [[ "$BINARIES" -eq 1 ]]; then
   esac
   bin_count=0
   while IFS= read -r -d '' f; do
-    magic=$(od -A n -N 4 -t x1 -- "$f" 2>/dev/null | tr -d ' \n')
-    case "$magic" in
-      7f454c46)
-        strip --strip-all -- "$f" || echo "WARN: strip failed on '$f'" >&2
-        bin_count=$(( bin_count + 1 )) ;;
-    esac
+    strip --strip-all -- "$f" 2>/dev/null && bin_count=$(( bin_count + 1 )) || true
   done < <(find "$FOLDER" -type f -print0)
   if [[ "$bin_count" -gt 0 ]]; then
     echo "Stripped debug symbols from $bin_count ELF binary/binaries in '$FOLDER'."
