@@ -8,6 +8,7 @@ pkgs.resholve.writeScriptBin "metadata-scrub" {
   ];
   execer = [
     "cannot:${pkgs.exiftool}/bin/exiftool"
+    "cannot:${pkgs.binutils}/bin/strip"
   ];
   interpreter = "${pkgs.bash}/bin/bash";
 } (builtins.readFile (lib.snowfall.fs.get-snowfall-file "/metadata-scrub.sh"))
