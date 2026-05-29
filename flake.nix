@@ -1,8 +1,7 @@
 {
-  description = "static blog";
+  description = "file metadata scrubbing tool";
 
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     snowfall-lib = {
       url = "github:snowfallorg/lib";

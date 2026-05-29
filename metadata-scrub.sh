@@ -1,21 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Check if a folder is provided
-if [[ -z "$1" ]]; then
-  echo "Usage: $0 <folder>"
+if [[ $# -eq 0 ]]; then
+  echo "Usage: $0 <folder>" >&2
   exit 1
 fi
 
 FOLDER="$1"
 
-# Ensure the folder exists
 if [[ ! -d "$FOLDER" ]]; then
-  echo "Error: Folder '$FOLDER' not found."
+  echo "Error: Folder '$FOLDER' not found." >&2
   exit 1
 fi
 
-# Recursively find and scrub metadata from all image files
-find "$FOLDER" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.gif" -o -iname "*.tiff" -o -iname "*.bmp" -o -iname "*.webp" \) -print0 \
-| xargs -0 -n 1 -P "$(nproc)" exiftool -overwrite_original -all=
-
-echo "✅ Metadata removed from all images in '$FOLDER'."
-
+count=0
+while IFS= read -r -d '' f; do
+  exiftool -overwrite_original -all= "$f" || echo "WARN: exiftool failed on '$f'" >&2
+  count=$(( count + 1 ))
+done < <(find "$FOLDER" -type f \( \
+  -iname "*.jpg"  -o -iname "*.jpeg" -o -iname "*.png"  -o -iname "*.gif" \
+  -o -iname "*.tiff" -o -iname "*.bmp" -o -iname "*.webp" \
+\) -print0)
+if [[ "$count" -eq 0 ]]; then
+  echo "No matching files found in '$FOLDER'."
+else
+  echo "Metadata removed from $count file(s) in '$FOLDER'."
+fi
