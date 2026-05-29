@@ -53,9 +53,9 @@ if [[ "$BINARIES" -eq 1 ]]; then
   esac
   bin_count=0
   while IFS= read -r -d '' f; do
-    mime=$(file --brief --mime-type -- "$f")
-    case "$mime" in
-      application/x-executable|application/x-sharedlib|application/x-pie-executable)
+    magic=$(od -A n -N 4 -t x1 -- "$f" 2>/dev/null | tr -d ' \n')
+    case "$magic" in
+      7f454c46)
         strip --strip-all -- "$f" || echo "WARN: strip failed on '$f'" >&2
         bin_count=$(( bin_count + 1 )) ;;
     esac
