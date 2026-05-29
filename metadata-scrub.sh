@@ -45,7 +45,7 @@ else
 fi
 
 if [[ "$BINARIES" -eq 1 ]]; then
-  FOLDER=$(realpath -e -- "$FOLDER") || { echo "Error: '$FOLDER' does not exist." >&2; exit 1; }
+  FOLDER=$(cd -- "$FOLDER" && pwd -P) || { echo "Error: '$FOLDER' does not exist." >&2; exit 1; }
   case "$FOLDER" in
     /|/usr|/usr/*|/nix|/nix/*|/bin|/lib|/lib64|/etc|/boot)
       echo "Error: --binaries refuses to operate on system path '$FOLDER'" >&2
